@@ -1,130 +1,1221 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nissan Z Archive — Home</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nissan Z Archive</title>
+  <meta name="description" content="Single-file Nissan Z Archive student resource website with responsive layout, search, filters, and model detail overlays." />
+  <style>
+    .intro {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  transition: opacity 0.5s ease;
+}
+    :root {
+      --bg: #3c65b9;
+      --panel: rgba(146, 146, 146, 0.06);
+      --panel-strong: rgba(255,255,255,0.1);
+      --line: rgba(255,255,255,0.14);
+      --text: #f3f4f6;
+      --muted: #b8c0cc;
+      --accent: #ff0000;
+      --accent-2: #ff0000;
+      --shadow: 0 18px 40px rgba(0,0,0,0.35);
+      --radius: 20px;
+      --content-width: 1180px;
+      --nav-height: 76px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(239,68,68,0.12), transparent 28%),
+        radial-gradient(circle at top right, rgba(245,158,11,0.08), transparent 22%),
+        linear-gradient(180deg, #090b10, #05060a 48%, #090b10);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    button, input {
+      font: inherit;
+    }
+
+    .container {
+      width: min(var(--content-width), calc(100% - 2rem));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(16px);
+      background: rgba(6,8,12,0.76);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .nav-wrap {
+      min-height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+
+    .brand strong {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.83rem;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a,
+    .menu-toggle {
+      border: 1px solid transparent;
+      padding: 0.7rem 1rem;
+      border-radius: 999px;
+      transition: 0.2s ease;
+      color: var(--muted);
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible,
+    .menu-toggle:hover,
+    .menu-toggle:focus-visible,
+    .chip:hover,
+    .chip:focus-visible,
+    .ghost-btn:hover,
+    .ghost-btn:focus-visible,
+    .primary-btn:hover,
+    .primary-btn:focus-visible,
+    .card button:hover,
+    .card button:focus-visible {
+      border-color: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      outline: none;
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+
+    main section {
+      scroll-margin-top: calc(var(--nav-height) + 18px);
+    }
+
+    .hero {
+      padding: 4rem 0 2rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .hero-visual,
+    .panel,
+    .timeline-card,
+    .about-grid > article,
+    .submit-box,
+    .footer-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: calc(var(--radius) + 6px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-copy {
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1rem;
+      min-height: 540px;
+    }
+
+    .eyebrow {
+      color: #ffffff;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-size: 0.78rem;
+    }
+
+    h1, h2, h3, h4, p {
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4.7rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    h2 {
+      font-size: clamp(1.7rem, 3vw, 2.7rem);
+      margin-bottom: 0.75rem;
+      letter-spacing: -0.03em;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+    }
+
+    .lead {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 63ch;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.85rem;
+      margin-top: 0.5rem;
+    }
+
+    .hero-meta div,
+    .mini-stat {
+      padding: 1rem;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hero-meta span,
+    .mini-stat span,
+    .timeline-year,
+    .spec-label,
+    .submit-label {
+      display: block;
+      color: var(--muted);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 0.35rem;
+    }
+
+    .action-row {
+      display: flex;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+      margin-top: 0.3rem;
+    }
+
+    .primary-btn,
+    .ghost-btn,
+    .chip,
+    .card button,
+    .close-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      padding: 0.85rem 1.1rem;
+      cursor: pointer;
+      transition: 0.2s ease;
+      color: var(--text);
+    }
+
+    .primary-btn {
+      background: linear-gradient(135deg, var(--accent), #c22525);
+      border-color: transparent;
+    }
+
+    .ghost-btn,
+    .chip,
+    .card button,
+    .close-btn {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 540px;
+      padding: 1.2rem;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .hero-visual::before {
+      content: "";
+      position: absolute;
+      inset: 8% 10% auto 10%;
+      height: 52%;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(239,68,68,0.2), transparent 72%);
+      filter: blur(12px);
+      pointer-events: none;
+    }
+
+    .hero-visual img {
+      position: relative;
+      width: min(100%, 740px);
+      object-fit: contain;
+      filter: drop-shadow(0 30px 30px rgba(0,0,0,0.45));
+    }
+
+    .hero-note {
+      position: absolute;
+      left: 1.2rem;
+      right: 1.2rem;
+      bottom: 1.2rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 0.75rem;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .section-copy {
+      color: var(--muted);
+      max-width: 60ch;
+    }
+
+    .models-section,
+    .timeline-section,
+    .about-section,
+    .submission-section {
+      padding: 2.25rem 0;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .search-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.9rem 1rem;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      box-shadow: var(--shadow);
+    }
+
+    .search-wrap input {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      outline: none;
+    }
+
+    .search-wrap input::placeholder {
+      color: #ffffff;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .chip.active {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(239,68,68,0.45);
+      color: #fff0f0;
+    }
+
+    .results-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: grid;
+      min-height: 100%;
+    }
+
+    .card-media {
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(180deg, rgba(169, 157, 157, 0.04), rgba(255, 255, 255, 0.01));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      overflow: hidden;
+    }
+
+    .card-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      transition: transform 0.35s ease;
+    }
+
+    .card:hover .card-media img {
+      transform: scale(1.03);
+    }
+
+    .card-body {
+      padding: 1.15rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .tag-row {
+      display: flex;
+      gap: 0.45rem;
+      flex-wrap: wrap;
+      color: #ffe0e0;
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tag {
+      padding: 0.35rem 0.55rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .card p {
+      color: var(--muted);
+    }
+
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .timeline-card {
+      padding: 1rem;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .timeline-card h3 {
+      font-size: 1rem;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+    }
+
+    .about-grid > article {
+      padding: 1.4rem;
+      display: grid;
+      gap: 1rem;
+    }
+
+    .bullet-list {
+      margin: 0;
+      padding-left: 1.2rem;
+      color: var(--muted);
+    }
+
+    .bullet-list li + li {
+      margin-top: 0.55rem;
+    }
+
+    .submit-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+
+    .submit-box {
+      padding: 1.35rem;
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .footer {
+      padding: 2rem 0 3rem;
+    }
+
+    .footer-card {
+      padding: 1.2rem 1.4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-note {
+      color: var(--muted);
+    }
+
+    .dialog {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+    }
+
+    .dialog.active {
+      display: block;
+    }
+
+    .dialog-backdrop {
+      position: absolute;
+      inset: 0;
+      background: rgba(35, 34, 34, 0.72);
+      backdrop-filter: blur(8px);
+    }
+
+    .dialog-panel {
+  position: relative;
+  width: min(1040px, calc(100% - 1rem));
+  max-height: calc(100vh - 1rem);
+  overflow-y: auto;
+  margin: 0.5rem auto;
+}
+
+    
+
+    .dialog-content {
+      padding: 1.2rem;
+    }
+
+    .dialog-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .close-btn {
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .detail-gallery,
+    .detail-copy {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .detail-gallery figure,
+    .detail-copy article {
+      margin: 0;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(246, 243, 243, 0.1);
+      border-radius: 20px;
+    }
+
+    .detail-gallery figure img {
+      width: 100%;
+      max-height: 360px;
+      object-fit: contain;
+      margin-bottom: 0.6rem;
+    }
+
+    .spec-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+
+    .spec-item {
+      padding: 0.9rem;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .no-results {
+      padding: 1.1rem 1.2rem;
+      background: var(--panel);
+      border: 1px dashed rgba(255,255,255,0.15);
+      border-radius: 18px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .about-grid,
+      .detail-grid,
+      .submit-grid,
+      .cards,
+      .controls,
+      .timeline-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-row {
+        justify-content: flex-start;
+      }
+
+      .hero-copy,
+      .hero-visual {
+        min-height: auto;
+      }
+
+      .hero-note,
+      .hero-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 740px) {
+      .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .nav-links {
+        position: absolute;
+        left: 1rem;
+        right: 1rem;
+        top: calc(100% + 0.5rem);
+        background: rgba(10,12,18,0.96);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 24px;
+        padding: 0.6rem;
+        flex-direction: column;
+        align-items: stretch;
+        display: none;
+        box-shadow: var(--shadow);
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        width: 100%;
+      }
+
+      .hero {
+        padding-top: 2rem;
+      }
+
+      h1 {
+        font-size: 2.35rem;
+      }
+
+      .hero-copy,
+      .hero-visual,
+      .about-grid > article,
+      .submit-box,
+      .dialog-content,
+      .timeline-card,
+      .card-body {
+        padding: 1rem;
+      }
+
+      .dialog-panel {
+        width: calc(100% - 0.5rem);
+        margin: 0.25rem auto;
+        max-height: calc(100vh - 0.5rem);
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="intro">
+  <h1>Nissan Z Archive</h1>
+  <p>Explore the evolution of the Nissan Z</p>
+</div>
   <header class="site-header">
-    <a class="brand" href="index.html">Nissan Z Archive<small>Completed visual draft / MVP prototype</small></a>
-    <button class="nav-toggle" aria-label="Open navigation">Menu</button>
-    <nav class="site-nav">
-      <a href="index.html" class="active">Home</a>
-      <a href="models.html" class="">Models</a>
-      <a href="archive.html" class="">Archive</a>
-      <a href="about.html" class="">About</a>
-    </nav>
+    <div class="container nav-wrap">
+      <a href="#home" class="brand" aria-label="Nissan Z Archive home">
+        <strong>Nissan Z Archive</strong>
+        
+      </a>
+
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+
+      <nav class="nav-links" id="site-nav" aria-label="Main navigation">
+        <a href="#home">Home</a>
+        <a href="#models">Models</a>
+        <a href="#archive">Archive</a>
+        <a href="#about">About</a>
+        
+      </nav>
+    </div>
   </header>
 
-  <main class="page-shell prototype-layout">
-    <section class="stage" aria-label="Homepage stage">
-      <div class="hero-stage">
-        <div class="hero-copy">
-          <div>
-            <p class="eyebrow">Interactive archive prototype</p>
-            <h1>Nissan Z Archive</h1>
-            <p>This completed visual draft uses the uploaded prototype as the main structure, replaces the old SVG dependency, and turns the site into a testable archive with real car entries, working navigation, and individual model pages.</p>
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <article class="hero-copy">
+          <p class="eyebrow">Interactive archive</p>
+          <h1>Nissan Z Archive</h1>
+          <p class="lead">
+            
+
+          <div class="action-row">
+            <a class="primary-btn" href="#models">Browse models</a>
           </div>
-          <div class="hero-meta">
-            <div><strong>Purpose</strong><span class="muted">Archive the visual evolution of selected Nissan Z models shown in the original concept.</span></div>
-            <div><strong>Status</strong><span class="muted">MVP ready for peer testing on desktop and mobile.</span></div>
-            <div><strong>Flow</strong><span class="muted">Home → Models → Individual car pages → Archive / About</span></div>
-            <div><strong>Content</strong><span class="muted">Uses only the image set you uploaded in this turn.</span></div>
-          </div>
-        </div>
-        <figure class="hero-figure" data-panel-title="Featured model" data-panel-body="The homepage hero now uses your uploaded Fairlady Z image instead of the previous SVG file." data-tags="Hero image|Home page|240Z">
+
+          
+        </article>
+
+        <aside class="hero-visual" aria-label="Featured Nissan Z image">
           <img src="assets/240z-red.png" alt="Red Fairlady Z hero image" />
-        </figure>
-      </div>
-      <div class="home-nav-grid">
-        <a href="index.html#featured-models" class="nav-card" data-panel-title="Home" data-panel-body="The home section introduces the archive and previews the featured models." data-tags="Home|Entry point">
-          <strong>Home</strong><span>Landing page and featured highlight</span>
-        </a>
-        <a href="models.html" class="nav-card" data-panel-title="Models" data-panel-body="Browse all included cars and jump to each dedicated page." data-tags="Models|Browse">
-          <strong>Models</strong><span>Cards, search, and individual pages</span>
-        </a>
-        <a href="archive.html" class="nav-card" data-panel-title="Archive" data-panel-body="A simplified timeline shows how the selected cars sit in the larger Z story." data-tags="Archive|Timeline">
-          <strong>Archive</strong><span>Timeline and archive logic</span>
-        </a>
-        <a href="about.html" class="nav-card" data-panel-title="About" data-panel-body="The required project description page explains the resource, audience, and testing goals." data-tags="About|Project description">
-          <strong>About</strong><span>Project explanation for testing</span>
-        </a>
+          <div class="hero-note">
+            <div class="mini-stat"><span>Content</span>Five real model entries from the current prototype.</div>
+            <div class="mini-stat"><span>Interaction</span>Search, filters, smooth scrolling, and model overlays.</div>
+            <div class="mini-stat"><span>Responsive</span>Designed to adapt from mobile screens to desktop layouts.</div>
+          </div>
+        </aside>
       </div>
     </section>
-    <aside class="info-panel" aria-label="Interaction panel">
-      <h2 class="panel-title">Interaction Panel</h2>
-      <div class="panel-box">
-        <strong id="panelHeading">Ready</strong>
-        <p id="panelBody" class="panel-muted">Hover over the homepage cards and model entries to preview what each section does. This keeps the interaction-panel idea from your original HTML but uses real HTML content instead of an SVG embed.</p>
-        <div id="panelTags" class="chips"><span class="chip">Home</span><span class="chip">Models</span><span class="chip">Responsive</span></div>
+
+    <section class="models-section" id="models">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Models</h2>
+            <p class="section-copy">
+              Browse the cars shown in the prototype direction. Use the search bar or filter buttons to test the browsing flow and review the archive content in one page.
+            </p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <label class="search-wrap" for="model-search">
+            <span aria-hidden="true">⌕</span>
+            <input id="model-search" type="search" placeholder="Search by model, code, era, or character" />
+          </label>
+
+          <div class="filter-row" role="toolbar" aria-label="Model filters">
+            <button class="chip active" type="button" data-filter="all">All</button>
+            <button class="chip" type="button" data-filter="classic">Classic</button>
+            <button class="chip" type="button" data-filter="modern">Modern</button>
+            <button class="chip" type="button" data-filter="current">Current</button>
+          </div>
+        </div>
+
+        <div class="results-row">
+          <div id="results-text">Showing 5 models</div>
+          <button class="ghost-btn" type="button" id="reset-filters">Reset search</button>
+        </div>
+
+        <div class="cards" id="model-grid">
+          <article class="card model-card" data-filter="classic" data-search="240z fairlady z s30 classic 1969 1973 light simple iconic long hood short deck analog instruments enthusiast">
+            <div class="card-media">
+              <img src="assets/240z-red.png" alt="Datsun 240Z or Fairlady Z" />
+            </div>
+            <div class="card-body">
+              <div class="tag-row">
+                <span class="tag">1969–1973</span>
+                <span class="tag">S30</span>
+                <span class="tag">Classic</span>
+              </div>
+              <h3>Datsun 240Z / Fairlady Z</h3>
+              <p>The 240Z introduced the Z-car identity with a clean fastback shape, a driver-focused cabin, and an affordable sports-car feel. It became the visual starting point for the entire archive.</p>
+              <button type="button" data-model="240z">Open model</button>
+            </div>
+          </article>
+
+          <article class="card model-card" data-filter="classic" data-search="300zx z32 classic 1989 2000 sleek technical grand touring low wide wedge integrated design 1990s">
+            <div class="card-media">
+              <img src="assets/300zx-z32.webp" alt="Nissan 300ZX" />
+            </div>
+            <div class="card-body">
+              <div class="tag-row">
+                <span class="tag">1989–2000</span>
+                <span class="tag">Z32</span>
+                <span class="tag">Classic</span>
+              </div>
+              <h3>Nissan 300ZX</h3>
+              <p>The Z32 pushed the Z into a more advanced 1990s era. Its body became wider and smoother, with a more integrated design language than the earlier cars.</p>
+              <button type="button" data-model="300zx">Open model</button>
+            </div>
+          </article>
+
+          <article class="card model-card" data-filter="modern" data-search="350z z33 modern 2002 2009 revival tuner friendly muscular planted stance early 2000s performance culture">
+            <div class="card-media">
+              <img src="assets/350z.webp" alt="Nissan 350Z" />
+            </div>
+            <div class="card-body">
+              <div class="tag-row">
+                <span class="tag">2002–2009</span>
+                <span class="tag">Z33</span>
+                <span class="tag">Modern</span>
+              </div>
+              <h3>Nissan 350Z</h3>
+              <p>The 350Z reintroduced the Z as a modern performance coupe after a gap in production. It simplified the shape into a short, solid, planted stance that became central to 2000s Nissan performance culture.</p>
+              <button type="button" data-model="350z">Open model</button>
+            </div>
+          </article>
+
+          <article class="card model-card" data-filter="modern" data-search="370z nismo z34 modern 2009 2020s sharper tighter track influenced lamps fascia long production run performance identity">
+            <div class="card-media">
+              <img src="assets/370z-white.png" alt="Nissan 370Z NISMO" />
+            </div>
+            <div class="card-body">
+              <div class="tag-row">
+                <span class="tag">2009–2020s</span>
+                <span class="tag">Z34</span>
+                <span class="tag">Modern</span>
+              </div>
+              <h3>Nissan 370Z NISMO</h3>
+              <p>The 370Z refined the Z33 formula with tighter proportions and a more aggressive front end. NISMO versions amplified the motorsport feel through aero and chassis-focused styling.</p>
+              <button type="button" data-model="370z">Open model</button>
+            </div>
+          </article>
+
+          <article class="card model-card" data-filter="current" data-search="new z nismo rz34 current 2020s retro futuristic twin turbo era led lighting retro inspired proportions contemporary front fascia">
+            <div class="card-media">
+              <img src="assets/new-z-nismo.jpg" alt="Nissan Z NISMO" />
+            </div>
+            <div class="card-body">
+              <div class="tag-row">
+                <span class="tag">2020s–Current</span>
+                <span class="tag">RZ34</span>
+                <span class="tag">Current</span>
+              </div>
+              <h3>Nissan Z NISMO</h3>
+              <p>The current Z reinterprets historic Z cues with a modern body and lighting package. Its profile and roofline reference earlier generations while the surfacing is clean and current.</p>
+              <button type="button" data-model="newz">Open model</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="no-results hidden" id="no-results">No models match the current search or filter. Try a different keyword or reset the filters.</div>
       </div>
-    </aside>
-  </main>
+    </section>
 
-  <section class="section" id="featured-models">
-    <div class="section-header">
-      <h2>Featured Models</h2>
-      <p>The site now focuses on the uploaded car set instead of inventing extra entries. Each card links to a separate detail page with overview text, specs, and image gallery.</p>
-    </div>
-    <div class="models-grid">
-        <article class="model-card" data-model-card data-era="classic" data-panel-title="Datsun 240Z / Fairlady Z" data-panel-body="The original Z established the long-hood, short-deck formula that defines the archive." data-tags="1969–1973|S30|Model page">
-          <div class="model-thumb"><img src="assets/240z-black.png" alt="Datsun 240Z / Fairlady Z" /></div>
-          <div class="model-content">
-            <div class="meta-row"><span class="tag">1969–1973</span><span class="tag">S30</span></div>
+    <section class="timeline-section" id="archive">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>Archive</h2>
+            <p class="section-copy">
+              This section explains the archive logic of the prototype. It does not try to cover every Z variation. Instead, it maps the selected cars into a readable timeline so testers can understand the project’s purpose quickly.
+            </p>
+          </div>
+        </div>
+
+        <div class="timeline-grid">
+          <article class="timeline-card">
+            <span class="timeline-year">1969–1973</span>
             <h3>Datsun 240Z / Fairlady Z</h3>
-            <p>The original Z established the long-hood, short-deck formula that defines the archive.</p>
-            <div class="button-row"><a class="button" href="models/240z-fairlady-z.html">Open page</a></div>
-          </div>
-        </article>
+            <p class="section-copy">The origin point of the Z design language and the main historical anchor for the archive.</p>
+          </article>
 
-        <article class="model-card" data-model-card data-era="modern" data-panel-title="Nissan 300ZX" data-panel-body="A low, wide, 1990s interpretation of the Z with more technology and a smoother silhouette." data-tags="1989–2000|Z32|Model page">
-          <div class="model-thumb"><img src="assets/300zx-z32.webp" alt="Nissan 300ZX" /></div>
-          <div class="model-content">
-            <div class="meta-row"><span class="tag">1989–2000</span><span class="tag">Z32</span></div>
-            <h3>Nissan 300ZX</h3>
-            <p>A low, wide, 1990s interpretation of the Z with more technology and a smoother silhouette.</p>
-            <div class="button-row"><a class="button" href="models/300zx-z32.html">Open page</a></div>
-          </div>
-        </article>
+          <article class="timeline-card">
+            <span class="timeline-year">1989–2000</span>
+            <h3>300ZX (Z32)</h3>
+            <p class="section-copy">Represents the smoother, more technical 1990s period of the Z lineage.</p>
+          </article>
 
-        <article class="model-card" data-model-card data-era="modern" data-panel-title="Nissan 350Z" data-panel-body="The revival-era Z that brought the badge back with a simpler, muscular early-2000s form." data-tags="2002–2009|Z33|Model page">
-          <div class="model-thumb"><img src="assets/350z.webp" alt="Nissan 350Z" /></div>
-          <div class="model-content">
-            <div class="meta-row"><span class="tag">2002–2009</span><span class="tag">Z33</span></div>
-            <h3>Nissan 350Z</h3>
-            <p>The revival-era Z that brought the badge back with a simpler, muscular early-2000s form.</p>
-            <div class="button-row"><a class="button" href="models/350z.html">Open page</a></div>
-          </div>
-        </article>
+          <article class="timeline-card">
+            <span class="timeline-year">2002–2009</span>
+            <h3>350Z (Z33)</h3>
+            <p class="section-copy">Marks the revival period, reconnecting the Z name to a new generation of enthusiasts.</p>
+          </article>
 
-        <article class="model-card" data-model-card data-era="modern" data-panel-title="Nissan 370Z NISMO" data-panel-body="A sharper, more aggressive evolution of the 350Z, shown here in NISMO form." data-tags="2009–2020s|Z34|Model page">
-          <div class="model-thumb"><img src="assets/370z-white.png" alt="Nissan 370Z NISMO" /></div>
-          <div class="model-content">
-            <div class="meta-row"><span class="tag">2009–2020s</span><span class="tag">Z34</span></div>
-            <h3>Nissan 370Z NISMO</h3>
-            <p>A sharper, more aggressive evolution of the 350Z, shown here in NISMO form.</p>
-            <div class="button-row"><a class="button" href="models/370z-nismo.html">Open page</a></div>
-          </div>
-        </article>
+          <article class="timeline-card">
+            <span class="timeline-year">2009–2020s</span>
+            <h3>370Z NISMO (Z34)</h3>
+            <p class="section-copy">Extends the revival into a sharper, longer-running performance era.</p>
+          </article>
 
-        <article class="model-card" data-model-card data-era="current" data-panel-title="Nissan Z NISMO" data-panel-body="The latest chapter, blending retro references with a contemporary front fascia and lighting design." data-tags="2020s–current|RZ34|Model page">
-          <div class="model-thumb"><img src="assets/new-z-nismo.jpg" alt="Nissan Z NISMO" /></div>
-          <div class="model-content">
-            <div class="meta-row"><span class="tag">2020s–current</span><span class="tag">RZ34</span></div>
-            <h3>Nissan Z NISMO</h3>
-            <p>The latest chapter, blending retro references with a contemporary front fascia and lighting design.</p>
-            <div class="button-row"><a class="button" href="models/new-z-nismo.html">Open page</a></div>
+          <article class="timeline-card">
+            <span class="timeline-year">2020s–Current</span>
+            <h3>Nissan Z NISMO (RZ34)</h3>
+            <p class="section-copy">The current chapter and visual endpoint of this prototype archive.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="about-section" id="about">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <h2>About this resource</h2>
+            <p class="section-copy">
+              This website is a proof-of-concept archive about selected Nissan Z models. It is designed useing real images, distinct model content, and a layout that adapts across desktop and mobile screen sizes.
+            </p>
           </div>
-        </article>
+        </div>
+
+        <div class="about-grid">
+          <article>
+            <div>
+              <h3>What the site does</h3>
+              <p class="section-copy">It gives users a simple way to move from a homepage overview to a models browser, then into model details. The archive section adds historical context, while this section explains the project itself.</p>
+            </div>
+            <div>
+              <h3>What is included</h3>
+              <ul class="bullet-list">
+                <li>Working global navigation</li>
+                <li>Responsive layout for desktop and mobile</li>
+                <li>Five model entries drawn from the uploaded image set</li>
+                <li>Search and filter interactions on the models section</li>
+                <li>Model overlays with overview, highlights, and image gallery</li>
+              </ul>
+            </div>
+          </article>
+
+      
+       
+
+
+
+  <footer class="footer">
+    <div class="container footer-card">
+      
+      <a class="ghost-btn" href="#home">Back to top</a>
     </div>
-  </section>
-
-  <footer class="site-footer">
-    <p>Nissan Z Archive student prototype</p>
-    <p>Built from the uploaded HTML/CSS direction and the user-provided car images.</p>
   </footer>
-  <script src="script.js"></script>
+
+  <div class="dialog" id="model-dialog" aria-hidden="true">
+    <div class="dialog-backdrop" data-close-dialog="true"></div>
+    <div class="dialog-panel" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+      <div class="dialog-content">
+        <div class="dialog-top">
+          <div>
+            <p class="eyebrow" id="dialog-era">Model detail</p>
+            <h2 id="dialog-title">Nissan Z</h2>
+          </div>
+          <button class="close-btn" type="button" aria-label="Close model details" data-close-dialog="true">✕</button>
+        </div>
+
+        <div class="detail-grid">
+          <div class="detail-gallery" id="dialog-gallery"></div>
+          <div class="detail-copy">
+            <article>
+              <h3>Overview</h3>
+              <p class="section-copy" id="dialog-description"></p>
+            </article>
+
+            <article>
+              <h3>Specs and identity</h3>
+              <div class="spec-grid" id="dialog-specs"></div>
+            </article>
+
+            <article>
+              <h3>Unique feature of the model</h3>
+              <ul class="bullet-list" id="dialog-highlights"></ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const navToggle = document.querySelector('.menu-toggle');
+    const navLinks = document.getElementById('site-nav');
+    const searchInput = document.getElementById('model-search');
+    const chips = Array.from(document.querySelectorAll('.chip'));
+    const cards = Array.from(document.querySelectorAll('.model-card'));
+    const resultsText = document.getElementById('results-text');
+    const noResults = document.getElementById('no-results');
+    const resetButton = document.getElementById('reset-filters');
+    const dialog = document.getElementById('model-dialog');
+    const dialogTitle = document.getElementById('dialog-title');
+    const dialogEra = document.getElementById('dialog-era');
+    const dialogDescription = document.getElementById('dialog-description');
+    const dialogGallery = document.getElementById('dialog-gallery');
+    const dialogSpecs = document.getElementById('dialog-specs');
+    const dialogHighlights = document.getElementById('dialog-highlights');
+
+    let activeFilter = 'all';
+
+    const modelData = {
+      '240z': {
+        title: 'Datsun 240Z / Fairlady Z',
+        era: '1969–1973 · S30',
+        description: 'The 240Z introduced the Z-car identity with a clean fastback shape, a driver-focused cabin, and an affordable sports-car feel. It became the visual starting point for the entire archive.',
+        specs: [
+          ['Generation', 'First'],
+          ['Code', 'S30'],
+          ['Layout', 'Front-engine / RWD'],
+          ['Character', 'Light, simple, iconic']
+        ],
+        highlights: [
+          'Long hood and short rear deck proportions',
+          'Simple cockpit with analog instruments',
+          'Strong enthusiast following and motorsport legacy',
+          'The key reference point for later retro-inspired Z models'
+        ],
+        gallery: [
+          ['assets/240z-red.png', 'Datsun 240Z / Fairlady Z archive image'],
+          ['assets/240z-black.png', 'Black Datsun 240Z / Fairlady Z archive image']
+        ]
+      },
+      '300zx': {
+        title: 'Nissan 300ZX',
+        era: '1989–2000 · Z32',
+        description: 'The Z32 pushed the Z into a more advanced 1990s era. Its body became wider and smoother, with a more integrated design language than the earlier cars.',
+        specs: [
+          ['Generation', 'Fourth'],
+          ['Code', 'Z32'],
+          ['Layout', 'Front-engine / RWD'],
+          ['Character', 'Sleek, technical, grand touring']
+        ],
+        highlights: [
+          'Low wedge-like stance',
+          'More refined GT-oriented identity',
+          'One of the most recognizable 1990s Japanese sports-car shapes',
+          'Frequently treated as a design icon in Z history'
+        ],
+        gallery: [
+          ['assets/300zx-z32.webp', 'Nissan 300ZX archive image']
+        ]
+      },
+      '350z': {
+        title: 'Nissan 350Z',
+        era: '2002–2009 · Z33',
+        description: 'The 350Z reintroduced the Z as a modern performance coupe after a gap in production. It simplified the shape into a short, solid, planted stance that became central to 2000s Nissan performance culture.',
+        specs: [
+          ['Generation', 'Fifth'],
+          ['Code', 'Z33'],
+          ['Layout', 'Front-engine / RWD'],
+          ['Character', 'Revival, tuner-friendly, muscular']
+        ],
+        highlights: [
+          'Strong revival of the Z nameplate',
+          'Compact cabin with muscular fenders',
+          'Popular in enthusiast and tuning culture',
+          'Bridge between classic heritage and modern performance branding'
+        ],
+        gallery: [
+          ['assets/350z.webp', 'Nissan 350Z archive image']
+        ]
+      },
+      '370z': {
+        title: 'Nissan 370Z NISMO',
+        era: '2009–2020s · Z34',
+        description: 'The 370Z refined the Z33 formula with tighter proportions and a more aggressive front end. NISMO versions amplified the motorsport feel through aero and chassis-focused styling.',
+        specs: [
+          ['Generation', 'Sixth'],
+          ['Code', 'Z34'],
+          ['Layout', 'Front-engine / RWD'],
+          ['Character', 'Sharper, tighter, track-influenced']
+        ],
+        highlights: [
+          'More compact proportions than the 350Z',
+          'Aggressive lamps and front fascia',
+          'Long production run kept the Z visible through the 2010s',
+          'NISMO trim emphasizes performance identity'
+        ],
+        gallery: [
+          ['assets/370z-white.png', 'Nissan 370Z NISMO archive image']
+        ]
+      },
+      'newz': {
+        title: 'Nissan Z NISMO',
+        era: '2020s–Current · RZ34',
+        description: 'The current Z reinterprets historic Z cues with a modern body and lighting package. Its profile and roofline reference earlier generations while the surfacing is clean and current.',
+        specs: [
+          ['Generation', 'Current'],
+          ['Code', 'RZ34'],
+          ['Layout', 'Front-engine / RWD'],
+          ['Character', 'Retro-futuristic, twin-turbo era']
+        ],
+        highlights: [
+          'Retro-inspired proportions linked back to the S30',
+          'Modern front-end treatment and LED lighting',
+          'NISMO form adds a stronger aero and motorsport look',
+          'Useful endpoint for the archive timeline'
+        ],
+        gallery: [
+          ['assets/new-z-nismo.jpg', 'Nissan Z NISMO archive image']
+        ]
+      }
+    };
+
+    function applyFilters() {
+      const query = searchInput.value.trim().toLowerCase();
+      let visibleCount = 0;
+
+      cards.forEach((card) => {
+        const filter = card.dataset.filter;
+        const searchBlob = card.dataset.search;
+        const matchesFilter = activeFilter === 'all' || filter === activeFilter;
+        const matchesQuery = !query || searchBlob.includes(query);
+        const shouldShow = matchesFilter && matchesQuery;
+        card.classList.toggle('hidden', !shouldShow);
+        if (shouldShow) visibleCount += 1;
+      });
+
+      resultsText.textContent = `Showing ${visibleCount} model${visibleCount === 1 ? '' : 's'}`;
+      noResults.classList.toggle('hidden', visibleCount !== 0);
+    }
+
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        activeFilter = chip.dataset.filter;
+        chips.forEach((btn) => btn.classList.toggle('active', btn === chip));
+        applyFilters();
+      });
+    });
+
+    searchInput.addEventListener('input', applyFilters);
+
+    resetButton.addEventListener('click', () => {
+      activeFilter = 'all';
+      searchInput.value = '';
+      chips.forEach((btn) => btn.classList.toggle('active', btn.dataset.filter === 'all'));
+      applyFilters();
+    });
+
+    function openDialog(modelKey) {
+      const model = modelData[modelKey];
+      if (!model) return;
+
+      dialogTitle.textContent = model.title;
+      dialogEra.textContent = model.era;
+      dialogDescription.textContent = model.description;
+
+      dialogGallery.innerHTML = model.gallery.map(([src, alt]) => `
+        <figure>
+          <img src="${src}" alt="${alt}">
+          <figcaption class="section-copy">${alt}</figcaption>
+        </figure>
+      `).join('');
+
+      dialogSpecs.innerHTML = model.specs.map(([label, value]) => `
+        <div class="spec-item">
+          <span class="spec-label">${label}</span>
+          <strong>${value}</strong>
+        </div>
+      `).join('');
+
+      dialogHighlights.innerHTML = model.highlights.map((item) => `<li>${item}</li>`).join('');
+
+      dialog.classList.add('active');
+      dialog.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeDialog() {
+      dialog.classList.remove('active');
+      dialog.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('[data-model]').forEach((button) => {
+      button.addEventListener('click', () => openDialog(button.dataset.model));
+    });
+
+    dialog.addEventListener('click', (event) => {
+      if (event.target.matches('[data-close-dialog="true"]')) {
+        closeDialog();
+      }
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && dialog.classList.contains('active')) {
+        closeDialog();
+      }
+    });
+
+    navToggle.addEventListener('click', () => {
+      const isOpen = navLinks.classList.toggle('open');
+      navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    navLinks.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        navToggle.setAttribute('aria-expanded', 'false');
+      });
+    });
+
+    applyFilters();
+  </script>
+  <script>
+setTimeout(() => {
+  const intro = document.querySelector('.intro');
+  intro.style.opacity = '0';
+
+  setTimeout(() => {
+    intro.style.display = 'none';
+  }, 500);
+}, 2000);
+</script>
 </body>
 </html>
